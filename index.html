@@ -7,6 +7,7 @@
 <style>
   :root {
     --maroon: #6b1d1d;
+    --maroon-dark: #4a1414;
     --gold: #c9932e;
     --marigold: #e07a2c;
     --cream: #fdf6ec;
@@ -37,71 +38,248 @@
     font-size: 1rem;
   }
   main {
-    max-width: 640px;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 1.75rem 1.25rem 3rem;
+    padding: 1.5rem 1rem 3rem;
   }
-  section h2 {
-    color: var(--maroon);
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-bottom: 2px solid var(--gold);
-    padding-bottom: 0.4rem;
-    margin: 2rem 0 1rem;
+
+  /* String of warm-glow lights along the top */
+  .lights {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 680px;
+    margin: 0 auto 0.5rem;
+    padding: 0 6px;
   }
-  .links {
-    display: grid;
-    gap: 0.85rem;
+  .lights::before {
+    content: "";
+    position: absolute;
+    left: 8px; right: 8px; top: 5px;
+    height: 22px;
+    border: 2px solid rgba(201, 147, 46, 0.5);
+    border-top: 0;
+    border-radius: 0 0 46% 46% / 0 0 20px 20px;
   }
-  .links a {
-    display: block;
-    background: #fff;
-    border: 1px solid #e6d3ae;
-    border-left: 5px solid var(--marigold);
-    border-radius: 8px;
+  .light {
+    position: relative;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #fff4d4, #ffcf6b 45%, #e79a2b 78%);
+    box-shadow: 0 0 8px 2px rgba(255, 193, 94, 0.75), 0 0 2px #fff2cf;
+  }
+  .light:nth-child(even) { margin-top: 9px; }
+
+  /* Stage holds the staircase plus side garlands and flanking diyas */
+  .stage {
+    position: relative;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 1.75rem 46px 0;
+  }
+  .stage::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 10%;
+    width: 78%; height: 85%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at 50% 40%, rgba(224, 122, 44, 0.18), rgba(224, 122, 44, 0) 70%);
+    pointer-events: none;
+  }
+
+  /* Marigold garland down each side */
+  .garland {
+    position: absolute;
+    top: 26px;
+    bottom: 64px;
+    width: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .garland.l { left: 8px; }
+  .garland.r { right: 8px; }
+  .garland::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 50%;
+    width: 3px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #7a8a3a, var(--gold));
+    border-radius: 2px;
+  }
+  .flower {
+    position: relative;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, #f0b84a 0 30%, rgba(0,0,0,0) 31%),
+      repeating-conic-gradient(from 0deg, var(--marigold) 0deg 18deg, #d0761d 18deg 36deg);
+    box-shadow: 0 0 0 2px rgba(201, 147, 46, 0.5);
+  }
+  .flower:nth-child(even) { transform: scale(0.82); }
+
+  /* The tiered Golu staircase */
+  .staircase {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .tier {
+    position: relative;
+    margin-top: -10px;
     padding: 1rem 1.1rem;
+    text-align: center;
+    color: var(--cream);
+    background: linear-gradient(180deg, #7d2323 0%, var(--maroon) 55%, #5c1919 100%);
+    border-top: 4px solid var(--gold);
+    border-radius: 10px 10px 4px 4px;
+    box-shadow: 0 7px 16px rgba(43, 24, 16, 0.35), inset 0 2px 0 rgba(255, 233, 200, 0.25);
+  }
+  .tier:first-child { margin-top: 0; }
+  .t1 { width: 44%; z-index: 7; }
+  .t2 { width: 55%; z-index: 6; }
+  .t3 { width: 67%; z-index: 5; }
+  .t4 { width: 79%; z-index: 4; }
+  .t5 { width: 90%; z-index: 3; }
+  .t6 { width: 100%; z-index: 2; }
+
+  /* Write-up tiers are clickable cards */
+  a.tier {
+    display: block;
     text-decoration: none;
-    color: var(--ink);
-    font-size: 1.02rem;
-    box-shadow: 0 1px 3px rgba(107, 29, 29, 0.08);
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
   }
-  .links a:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(107, 29, 29, 0.14);
+  a.tier:hover,
+  a.tier:focus-visible {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow: 0 10px 22px rgba(43, 24, 16, 0.45), inset 0 2px 0 rgba(255, 233, 200, 0.3);
+    outline: none;
   }
-  .links a .label {
+  a.tier:focus-visible { box-shadow: 0 0 0 3px var(--gold), 0 10px 22px rgba(43, 24, 16, 0.45); }
+  .tier .label {
     display: block;
     font-weight: bold;
-    color: var(--maroon);
+    font-size: 1.05rem;
+    color: #ffe9c4;
+    letter-spacing: 0.01em;
   }
-  .links a .sub {
+  .tier .sub {
     display: block;
     font-size: 0.85rem;
-    color: #6b5a4a;
-    margin-top: 0.2rem;
+    color: #eccfa6;
+    margin-top: 0.25rem;
   }
-  .video-wrap {
+
+  /* Decorative top tier: kalasham */
+  .tier-decor { padding: 0.6rem 0.5rem 0.7rem; }
+  .kalash { width: 58px; height: auto; display: block; margin: 0 auto; }
+
+  /* Video tier */
+  .tier-video { padding: 0.9rem; }
+  .video-caption {
+    display: block;
+    font-size: 0.8rem;
+    color: #eccfa6;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    margin-bottom: 0.5rem;
+  }
+  .video-frame {
     position: relative;
     width: 100%;
-    padding-top: 56.25%;
-    border-radius: 8px;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(107, 29, 29, 0.15);
-    border: 1px solid #e6d3ae;
+    border: 1px solid rgba(201, 147, 46, 0.6);
+    background: #000;
   }
-  .video-wrap iframe {
+  .video-frame iframe {
     position: absolute;
-    top: 0; left: 0;
+    inset: 0;
     width: 100%; height: 100%;
     border: 0;
   }
+
+  /* Base plinth under the bottom tier */
+  .plinth {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 18px;
+    margin-top: -2px;
+    background: linear-gradient(180deg, var(--maroon-dark), var(--ink));
+    border-radius: 3px;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Two diyas flanking the bottom tier */
+  .diyas {
+    position: absolute;
+    left: 6px; right: 6px;
+    bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .diya { width: 52px; height: auto; }
+  .flame { transform-origin: 50% 100%; }
+
   footer {
     text-align: center;
     padding: 1.5rem;
     font-size: 0.8rem;
     color: #8a7458;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes glowflick {
+      0%, 100% { opacity: 1; }
+      42% { opacity: 0.72; }
+      68% { opacity: 0.9; }
+    }
+    .light { animation: glowflick 3.2s ease-in-out infinite; }
+    .light:nth-child(3n) { animation-delay: 0.7s; }
+    .light:nth-child(3n+1) { animation-delay: 1.4s; }
+    .flame { animation: glowflick 1.7s ease-in-out infinite; }
+  }
+
+  /* Phone: collapse the staircase into a single vertical column */
+  @media (max-width: 480px) {
+    main { padding: 1.25rem 0.85rem 2.5rem; }
+    .stage { padding: 1.25rem 4px 0; }
+    .stage::before { display: none; }
+    .garland { display: none; }
+    .staircase { gap: 0.7rem; }
+    .tier {
+      width: 100% !important;
+      margin-top: 0 !important;
+      z-index: auto !important;
+      border-radius: 10px;
+    }
+    .plinth { display: none; }
+    .diyas {
+      position: static;
+      justify-content: center;
+      gap: 44px;
+      margin-top: 1rem;
+    }
+    header h1 { font-size: 1.55rem; }
   }
 </style>
 </head>
@@ -109,38 +287,101 @@
 
 <header>
   <h1>Pradeep's Golu 2026</h1>
-  <p>Welcome &mdash; thank you for visiting our Navratri Golu display</p>
+  <p>Welcome. Thank you for visiting our Navratri Golu display.</p>
 </header>
 
 <main>
-  <section aria-labelledby="writeups-heading">
-    <h2 id="writeups-heading">Read</h2>
-    <div class="links">
-      <a href="writeup1.html">
+  <h2 class="sr-only">Our Golu display: read the write-ups and watch the video</h2>
+
+  <div class="lights" aria-hidden="true">
+    <span class="light"></span><span class="light"></span><span class="light"></span>
+    <span class="light"></span><span class="light"></span><span class="light"></span>
+    <span class="light"></span><span class="light"></span><span class="light"></span>
+    <span class="light"></span><span class="light"></span><span class="light"></span>
+    <span class="light"></span><span class="light"></span>
+  </div>
+
+  <div class="stage">
+    <div class="garland l" aria-hidden="true">
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+    </div>
+    <div class="garland r" aria-hidden="true">
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+    </div>
+
+    <div class="staircase">
+      <!-- Tier 1: decorative kalasham -->
+      <div class="tier t1 tier-decor">
+        <svg class="kalash" viewBox="0 0 80 92" aria-hidden="true">
+          <path d="M18 40 Q8 62 24 80 Q40 92 56 80 Q72 62 62 40 Z" fill="#c9932e" stroke="#6b1d1d" stroke-width="2"/>
+          <rect x="21" y="33" width="38" height="10" rx="3" fill="#6b1d1d"/>
+          <rect x="26" y="25" width="28" height="9" rx="3" fill="#e07a2c"/>
+          <ellipse cx="40" cy="19" rx="9" ry="11" fill="#7d4a1e"/>
+          <path d="M31 21 Q19 9 25 1 Q35 12 40 19 Z" fill="#4e7d3a"/>
+          <path d="M49 21 Q61 9 55 1 Q45 12 40 19 Z" fill="#4e7d3a"/>
+        </svg>
+      </div>
+
+      <!-- Tier 2: write-up 1 -->
+      <a class="tier t2" href="writeup1.html">
         <span class="label">PLACEHOLDER TITLE 1</span>
         <span class="sub">Short description goes here</span>
       </a>
-      <a href="writeup2.html">
+
+      <!-- Tier 3: write-up 2 -->
+      <a class="tier t3" href="writeup2.html">
         <span class="label">PLACEHOLDER TITLE 2</span>
         <span class="sub">Short description goes here</span>
       </a>
-      <a href="writeup3.html">
+
+      <!-- Tier 4: write-up 3 -->
+      <a class="tier t4" href="writeup3.html">
         <span class="label">PLACEHOLDER TITLE 3</span>
         <span class="sub">Short description goes here</span>
       </a>
-      <a href="writeup4.html">
+
+      <!-- Tier 5: write-up 4 -->
+      <a class="tier t5" href="writeup4.html">
         <span class="label">PLACEHOLDER TITLE 4</span>
         <span class="sub">Short description goes here</span>
       </a>
-    </div>
-  </section>
 
-  <section aria-labelledby="video-heading">
-    <h2 id="video-heading">Watch</h2>
-    <div class="video-wrap">
-      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Golu video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <!-- Tier 6: the video -->
+      <div class="tier t6 tier-video">
+        <span class="video-caption">Watch our Golu</span>
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Golu video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
     </div>
-  </section>
+
+    <div class="plinth" aria-hidden="true"></div>
+
+    <div class="diyas" aria-hidden="true">
+      <svg class="diya" viewBox="0 0 60 48">
+        <ellipse cx="30" cy="22" rx="13" ry="17" fill="#ffd98a" opacity="0.45"/>
+        <path class="flame" d="M30 8 C24 18 26 27 30 31 C34 27 36 18 30 8 Z" fill="#f6c453"/>
+        <path class="flame" d="M30 15 C27 21 28 26 30 29 C32 26 33 21 30 15 Z" fill="#e0742c"/>
+        <path d="M6 33 Q30 50 54 33 Z" fill="#8a2b2b"/>
+        <ellipse cx="30" cy="33" rx="24" ry="8" fill="#6b1d1d"/>
+        <ellipse cx="30" cy="32" rx="19" ry="5" fill="#c9932e"/>
+      </svg>
+      <svg class="diya" viewBox="0 0 60 48">
+        <ellipse cx="30" cy="22" rx="13" ry="17" fill="#ffd98a" opacity="0.45"/>
+        <path class="flame" d="M30 8 C24 18 26 27 30 31 C34 27 36 18 30 8 Z" fill="#f6c453"/>
+        <path class="flame" d="M30 15 C27 21 28 26 30 29 C32 26 33 21 30 15 Z" fill="#e0742c"/>
+        <path d="M6 33 Q30 50 54 33 Z" fill="#8a2b2b"/>
+        <ellipse cx="30" cy="33" rx="24" ry="8" fill="#6b1d1d"/>
+        <ellipse cx="30" cy="32" rx="19" ry="5" fill="#c9932e"/>
+      </svg>
+    </div>
+  </div>
 </main>
 
 <footer>

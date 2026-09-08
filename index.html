@@ -107,7 +107,7 @@
     top: 0; bottom: 0; left: 50%;
     width: 3px;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, #7a8a3a, var(--gold));
+    background: repeating-linear-gradient(180deg, var(--gold) 0 5px, #7a8a3a 5px 11px);
     border-radius: 2px;
   }
   .flower {
@@ -264,9 +264,15 @@
      chunky dark riser edge so the descending-steps shape still reads. */
   @media (max-width: 560px) {
     main { padding: 1.25rem 0.85rem 2.5rem; }
-    .stage { padding: 1.25rem 6px 0; }
+    .stage { padding: 1.25rem 26px 0; }
     .stage::before { display: none; }
-    .garland { display: none; }
+
+    /* keep the side garlands, just make them slim and hug the edge */
+    .garland { width: 15px; }
+    .garland.l { left: 3px; }
+    .garland.r { right: 3px; }
+    .garland .flower { width: 15px; height: 15px; }
+    .garland::before { width: 2px; }
 
     .staircase { gap: 0; }
     .tier {
@@ -277,11 +283,11 @@
       border-bottom: 8px solid #3d1010;
       box-shadow: 0 5px 9px rgba(43, 24, 16, 0.3), inset 0 2px 0 rgba(255, 233, 200, 0.22);
     }
-    .t1 { width: 62%; }
-    .t2 { width: 74%; }
-    .t3 { width: 82%; }
-    .t4 { width: 89%; }
-    .t5 { width: 95%; }
+    .t1 { width: 64%; }
+    .t2 { width: 76%; }
+    .t3 { width: 84%; }
+    .t4 { width: 90%; }
+    .t5 { width: 96%; }
     .t6 { width: 100%; }
 
     .tier .label { font-size: 1rem; }
@@ -289,18 +295,19 @@
     .ganesha { width: 54px; }
 
     .plinth { height: 15px; }
-    .diya { width: 44px; }
+    .diya { width: 42px; }
 
     header h1 { font-size: 1.55rem; }
   }
 
   /* Very narrow phones: ease the taper further so the top step still fits text */
   @media (max-width: 360px) {
-    .t1 { width: 66%; }
-    .t2 { width: 82%; }
-    .t3 { width: 88%; }
-    .t4 { width: 93%; }
-    .t5 { width: 97%; }
+    .stage { padding: 1.25rem 22px 0; }
+    .t1 { width: 68%; }
+    .t2 { width: 84%; }
+    .t3 { width: 90%; }
+    .t4 { width: 94%; }
+    .t5 { width: 98%; }
     .tier .label { font-size: 0.95rem; }
     .tier .sub { font-size: 0.8rem; }
   }
@@ -330,8 +337,12 @@
       <span class="flower"></span><span class="flower"></span><span class="flower"></span>
       <span class="flower"></span><span class="flower"></span><span class="flower"></span>
       <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
     </div>
     <div class="garland r" aria-hidden="true">
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
+      <span class="flower"></span><span class="flower"></span><span class="flower"></span>
       <span class="flower"></span><span class="flower"></span><span class="flower"></span>
       <span class="flower"></span><span class="flower"></span><span class="flower"></span>
       <span class="flower"></span><span class="flower"></span><span class="flower"></span>

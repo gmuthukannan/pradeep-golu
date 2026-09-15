@@ -153,6 +153,23 @@
   .next-btn:hover { background: #8a2b2b; }
   .next-btn.show { display: inline-block; }
 
+  /* Name entry card */
+  .name-card { text-align: center; }
+  .name-card p { margin: 0 0 1rem; color: #6b5a4a; }
+  #name-form { display: flex; flex-direction: column; align-items: center; gap: 0.9rem; }
+  .name-input {
+    width: 100%;
+    max-width: 320px;
+    font-family: inherit;
+    font-size: 1.05rem;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid #e6d3ae;
+    border-radius: 8px;
+    background: var(--cream);
+    color: var(--ink);
+  }
+  .name-input:focus { outline: none; border-color: var(--marigold); }
+
   /* Score screen */
   .score-screen { text-align: center; }
   .score-screen .big {
@@ -243,15 +260,23 @@
 
 <main>
   <h1>Golu Quiz</h1>
-  <p class="intro">A few quick questions about Navratri and Golu. Get one right and things get festive.</p>
+  <p class="intro" id="intro-text">A few quick questions about Navratri and Golu. Get one right and things get festive.</p>
 
-  <div class="progress-row">
+  <div class="card name-card" id="name-card">
+    <p>Who's playing?</p>
+    <form id="name-form">
+      <input type="text" id="name-input" class="name-input" placeholder="Enter your name" maxlength="40" autocomplete="off" autofocus>
+      <button type="submit" class="next-btn show">Start the quiz &rarr;</button>
+    </form>
+  </div>
+
+  <div class="progress-row" id="progress-row" hidden>
     <span id="progress-label">Question 1 of 5</span>
     <span id="score-label">Score: 0</span>
   </div>
-  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-track" id="progress-track" hidden><div class="progress-fill" id="progress-fill"></div></div>
 
-  <div class="card" id="quiz-card">
+  <div class="card" id="quiz-card" hidden>
     <p class="question" id="question-text"></p>
     <div class="options" id="options-list"></div>
     <p class="feedback" id="feedback-text"></p>
@@ -299,10 +324,47 @@
     }
   ];
 
+  // Personalized lines. {name} gets swapped for whatever the player typed.
+  var CORRECT_MESSAGES = [
+    "Good job, {name}!",
+    "That's amazing, {name}!",
+    "{name}, you're on fire!",
+    "Nailed it, {name}!",
+    "Look at {name} go!",
+    "Correct! {name} really knows the Golu."
+  ];
+  var WRONG_MESSAGES = [
+    "Oh! That's not what {name} can do.",
+    "Oops! A kindergartener would have answered that, {name}.",
+    "Not quite, {name}. Better luck on the next one.",
+    "{name}, really? Let's try that again next time.",
+    "Ouch, even the diyas are laughing, {name}.",
+    "Hmm, {name}, are you even trying?"
+  ];
+  var lastMsgIndex = { correct: -1, wrong: -1 };
+
+  function pickMessage(arr, key) {
+    if (arr.length === 1) return arr[0];
+    var idx;
+    do { idx = Math.floor(Math.random() * arr.length); } while (idx === lastMsgIndex[key]);
+    lastMsgIndex[key] = idx;
+    return arr[idx];
+  }
+  function personalize(template) {
+    return template.replace(/\{name\}/g, playerName);
+  }
+
   var current = 0;
   var score = 0;
   var answered = false;
+  var playerName = 'Champion';
 
+  var introText = document.getElementById('intro-text');
+  var nameCard = document.getElementById('name-card');
+  var nameForm = document.getElementById('name-form');
+  var nameInput = document.getElementById('name-input');
+  var progressRow = document.getElementById('progress-row');
+  var progressTrack = document.getElementById('progress-track');
   var questionText = document.getElementById('question-text');
   var optionsList = document.getElementById('options-list');
   var feedbackText = document.getElementById('feedback-text');
@@ -315,6 +377,18 @@
   var scoreBig = document.getElementById('score-big');
   var scoreMsg = document.getElementById('score-msg');
   var retryBtn = document.getElementById('retry-btn');
+
+  nameForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var typed = nameInput.value.trim();
+    playerName = typed || 'Champion';
+    introText.textContent = 'Good luck, ' + playerName + "! Let's see what you know about Navratri and Golu.";
+    nameCard.hidden = true;
+    progressRow.hidden = false;
+    progressTrack.hidden = false;
+    quizCard.hidden = false;
+    renderQuestion();
+  });
 
   function renderQuestion() {
     answered = false;
@@ -361,11 +435,11 @@
 
     if (isCorrect) {
       score += 1;
-      feedbackText.textContent = 'Correct!';
+      feedbackText.textContent = personalize(pickMessage(CORRECT_MESSAGES, 'correct'));
       feedbackText.className = 'feedback is-correct';
       burstFireworks();
     } else {
-      feedbackText.textContent = 'Not quite, the right answer is highlighted above.';
+      feedbackText.textContent = personalize(pickMessage(WRONG_MESSAGES, 'wrong')) + ' The correct answer is highlighted above.';
       feedbackText.className = 'feedback is-wrong';
       popClowns();
     }
@@ -390,10 +464,10 @@
     progressLabel.textContent = 'Quiz complete';
     scoreBig.textContent = score + ' / ' + QUESTIONS.length;
     var msg;
-    if (score === QUESTIONS.length) { msg = "Golu genius! You know your stuff."; }
-    else if (score >= Math.ceil(QUESTIONS.length * 0.6)) { msg = "Great job, well done!"; }
-    else if (score > 0) { msg = "Nice try, come explore the write-ups for more."; }
-    else { msg = "Rough round. Have another go?"; }
+    if (score === QUESTIONS.length) { msg = "Golu genius, " + playerName + "! You really know your stuff."; }
+    else if (score >= Math.ceil(QUESTIONS.length * 0.6)) { msg = "Great job, " + playerName + "! Well done."; }
+    else if (score > 0) { msg = "Nice try, " + playerName + ". Come explore the write-ups for more."; }
+    else { msg = "Rough round, " + playerName + ". A kindergartener might've done better. Have another go?"; }
     scoreMsg.textContent = msg;
   }
 
@@ -469,8 +543,6 @@
     }
     setTimeout(function () { layer.remove(); }, 1500);
   }
-
-  renderQuestion();
 </script>
 
 </body>

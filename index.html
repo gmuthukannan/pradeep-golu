@@ -175,6 +175,34 @@
     color: #eccfa6;
     margin-top: 0.25rem;
   }
+  .tier .chevron {
+    display: inline-block;
+    margin-left: 0.3rem;
+    font-size: 0.8em;
+    color: var(--gold);
+    transition: transform 0.2s ease;
+  }
+  a.tier[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+  a.tier[aria-expanded="true"] {
+    filter: brightness(1.08);
+    box-shadow: 0 10px 22px rgba(43, 24, 16, 0.45), inset 0 2px 0 rgba(255, 233, 200, 0.3);
+  }
+
+  /* Inline video panel that drops open below a write-up tier */
+  .panel {
+    margin: 0 auto;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #3d1010 0%, #2b1810 100%);
+    border: 1px solid rgba(201, 147, 46, 0.5);
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    padding: 0.7rem;
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.35), 0 6px 14px rgba(43, 24, 16, 0.3);
+  }
+  .panel[hidden] { display: none; }
+  /* when a panel is open, the next tier sits flush below it instead of
+     overlapping it the way tiers overlap each other */
+  .panel:not([hidden]) + .tier { margin-top: 0; }
 
   /* Decorative top tier: Lord Ganesha */
   .tier-decor { padding: 0.6rem 0.5rem 0.7rem; }
@@ -411,28 +439,48 @@
       </div>
 
       <!-- Tier 2: write-up 1 -->
-      <a class="tier t2" href="writeup1.html">
-        <span class="label">Pradeep is the BEST</span>
+      <a class="tier t2" href="writeup1.html" aria-expanded="false" aria-controls="panel1">
+        <span class="label">Pradeep is the BEST<span class="chevron" aria-hidden="true">&#9662;</span></span>
         <span class="sub">Short description goes here</span>
       </a>
+      <div class="panel t2" id="panel1" hidden>
+        <div class="video-frame">
+          <iframe data-src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Pradeep is the BEST" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
 
       <!-- Tier 3: write-up 2 -->
-      <a class="tier t3" href="writeup2.html">
-        <span class="label">Pradeep is Amazing</span>
+      <a class="tier t3" href="writeup2.html" aria-expanded="false" aria-controls="panel2">
+        <span class="label">Pradeep is Amazing<span class="chevron" aria-hidden="true">&#9662;</span></span>
         <span class="sub">Short description goes here</span>
       </a>
+      <div class="panel t3" id="panel2" hidden>
+        <div class="video-frame">
+          <iframe data-src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Pradeep is Amazing" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
 
       <!-- Tier 4: write-up 3 -->
-      <a class="tier t4" href="writeup3.html">
-        <span class="label">Pradeep is the Genius</span>
+      <a class="tier t4" href="writeup3.html" aria-expanded="false" aria-controls="panel3">
+        <span class="label">Pradeep is the Genius<span class="chevron" aria-hidden="true">&#9662;</span></span>
         <span class="sub">Short description goes here</span>
       </a>
+      <div class="panel t4" id="panel3" hidden>
+        <div class="video-frame">
+          <iframe data-src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Pradeep is the Genius" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
 
       <!-- Tier 5: write-up 4 -->
-      <a class="tier t5" href="writeup4.html">
-        <span class="label">Pradeep is Spectacular</span>
+      <a class="tier t5" href="writeup4.html" aria-expanded="false" aria-controls="panel4">
+        <span class="label">Pradeep is Spectacular<span class="chevron" aria-hidden="true">&#9662;</span></span>
         <span class="sub">Short description goes here</span>
       </a>
+      <div class="panel t5" id="panel4" hidden>
+        <div class="video-frame">
+          <iframe data-src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Pradeep is Spectacular" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
 
       <!-- Tier 6: the video -->
       <div class="tier t6 tier-video">
@@ -469,6 +517,47 @@
 <footer>
   Made with care for Navratri 2026
 </footer>
+
+<script>
+  // Accordion: clicking a write-up tier opens a video panel below it
+  // instead of navigating away. Opening one closes any other that was
+  // open, and the closed panel's video is unloaded so it stops playing.
+  (function () {
+    var tiers = document.querySelectorAll('.tier[aria-controls]');
+
+    function closeTier(tier) {
+      var panel = document.getElementById(tier.getAttribute('aria-controls'));
+      tier.setAttribute('aria-expanded', 'false');
+      if (!panel) return;
+      panel.hidden = true;
+      var iframe = panel.querySelector('iframe');
+      if (iframe) { iframe.src = ''; }
+    }
+
+    function openTier(tier) {
+      var panel = document.getElementById(tier.getAttribute('aria-controls'));
+      tier.setAttribute('aria-expanded', 'true');
+      if (!panel) return;
+      panel.hidden = false;
+      var iframe = panel.querySelector('iframe');
+      if (iframe && iframe.dataset.src) {
+        iframe.src = iframe.dataset.src;
+      }
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    tiers.forEach(function (tier) {
+      tier.addEventListener('click', function (e) {
+        // let ctrl/cmd/shift/middle-click open the real write-up page as usual
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        var isOpen = tier.getAttribute('aria-expanded') === 'true';
+        tiers.forEach(closeTier);
+        if (!isOpen) { openTier(tier); }
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>

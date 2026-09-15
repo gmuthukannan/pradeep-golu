@@ -219,17 +219,17 @@
     position: fixed;
     left: var(--x);
     top: var(--y);
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(var(--s, 1));
     font-size: 3rem;
     z-index: 50;
     pointer-events: none;
     animation: clown-wobble 0.9s ease-out forwards;
   }
   @keyframes clown-wobble {
-    0% { transform: translate(-50%, -50%) scale(0.2) rotate(-15deg); opacity: 0; }
-    35% { transform: translate(-50%, -50%) scale(1.15) rotate(8deg); opacity: 1; }
-    55% { transform: translate(-50%, -50%) scale(1) rotate(-6deg); }
-    100% { transform: translate(-50%, -55%) scale(1) rotate(0deg); opacity: 0; }
+    0% { transform: translate(-50%, -50%) scale(calc(var(--s, 1) * 0.2)) rotate(-15deg); opacity: 0; }
+    35% { transform: translate(-50%, -50%) scale(calc(var(--s, 1) * 1.15)) rotate(8deg); opacity: 1; }
+    55% { transform: translate(-50%, -50%) scale(var(--s, 1)) rotate(-6deg); }
+    100% { transform: translate(-50%, -60%) scale(var(--s, 1)) rotate(0deg); opacity: 0; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -344,9 +344,6 @@
     answered = true;
     var item = QUESTIONS[current];
     var isCorrect = choiceIndex === item.correct;
-    var rect = btn.getBoundingClientRect();
-    var x = rect.left + rect.width / 2;
-    var y = rect.top + rect.height / 2;
 
     Array.prototype.forEach.call(optionsList.children, function (opt, i) {
       opt.disabled = true;
@@ -366,11 +363,11 @@
       score += 1;
       feedbackText.textContent = 'Correct!';
       feedbackText.className = 'feedback is-correct';
-      burstFireworks(x, y);
+      burstFireworks();
     } else {
       feedbackText.textContent = 'Not quite, the right answer is highlighted above.';
       feedbackText.className = 'feedback is-wrong';
-      popClown(x, y);
+      popClowns();
     }
 
     scoreLabel.textContent = 'Score: ' + score;
@@ -408,35 +405,69 @@
     renderQuestion();
   });
 
-  function burstFireworks(x, y) {
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // A whole screen of firework bursts for a correct answer: several burst
+  // origins scattered around the viewport, staggered so they cascade like
+  // a real fireworks show, each throwing a ring of sparks.
+  function burstFireworks() {
+    if (reduceMotion) return;
     var layer = document.createElement('div');
     layer.className = 'fx-layer';
     document.body.appendChild(layer);
-    var colors = ['#c9932e', '#e07a2c', '#6b1d1d', '#fdf6ec', '#3f7d43'];
-    var count = 18;
-    for (var i = 0; i < count; i++) {
-      var angle = (Math.PI * 2 * i) / count + Math.random() * 0.3;
-      var dist = 60 + Math.random() * 70;
-      var spark = document.createElement('span');
-      spark.className = 'spark';
-      spark.style.setProperty('--x', x + 'px');
-      spark.style.setProperty('--y', y + 'px');
-      spark.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-      spark.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-      spark.style.setProperty('--c', colors[i % colors.length]);
-      layer.appendChild(spark);
+    var colors = ['#c9932e', '#e07a2c', '#6b1d1d', '#fdf6ec', '#3f7d43', '#e94f4f'];
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var burstCount = 9;
+    var sparksPerBurst = 16;
+
+    for (var b = 0; b < burstCount; b++) {
+      (function (delay) {
+        setTimeout(function () {
+          var ox = w * 0.1 + Math.random() * w * 0.8;
+          var oy = h * 0.08 + Math.random() * h * 0.7;
+          for (var i = 0; i < sparksPerBurst; i++) {
+            var angle = (Math.PI * 2 * i) / sparksPerBurst + Math.random() * 0.4;
+            var dist = 45 + Math.random() * 95;
+            var spark = document.createElement('span');
+            spark.className = 'spark';
+            spark.style.setProperty('--x', ox + 'px');
+            spark.style.setProperty('--y', oy + 'px');
+            spark.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            spark.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            spark.style.setProperty('--c', colors[(b + i) % colors.length]);
+            layer.appendChild(spark);
+          }
+        }, delay);
+      })(b * 85);
     }
-    setTimeout(function () { layer.remove(); }, 800);
+    setTimeout(function () { layer.remove(); }, burstCount * 85 + 900);
   }
 
-  function popClown(x, y) {
-    var el = document.createElement('div');
-    el.className = 'clown-pop';
-    el.textContent = '\u{1F921}';
-    el.style.setProperty('--x', x + 'px');
-    el.style.setProperty('--y', y + 'px');
-    document.body.appendChild(el);
-    setTimeout(function () { el.remove(); }, 950);
+  // A screen full of tumbling clowns for a wrong answer.
+  function popClowns() {
+    if (reduceMotion) return;
+    var layer = document.createElement('div');
+    layer.className = 'fx-layer';
+    document.body.appendChild(layer);
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var count = 60;
+
+    for (var i = 0; i < count; i++) {
+      (function (delay) {
+        setTimeout(function () {
+          var el = document.createElement('div');
+          el.className = 'clown-pop';
+          el.textContent = '\u{1F921}';
+          el.style.setProperty('--x', Math.random() * w + 'px');
+          el.style.setProperty('--y', Math.random() * h + 'px');
+          el.style.setProperty('--s', (0.5 + Math.random() * 1.2).toFixed(2));
+          layer.appendChild(el);
+        }, delay);
+      })(Math.random() * 450);
+    }
+    setTimeout(function () { layer.remove(); }, 1500);
   }
 
   renderQuestion();

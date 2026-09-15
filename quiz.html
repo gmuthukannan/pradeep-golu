@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golu Quiz &mdash; Pradeep's Golu 2026</title>
+<style>
+  :root {
+    --maroon: #6b1d1d;
+    --maroon-dark: #4a1414;
+    --gold: #c9932e;
+    --marigold: #e07a2c;
+    --cream: #fdf6ec;
+    --ink: #2b1810;
+    --green: #3f7d43;
+    --red: #a33333;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    background: linear-gradient(180deg, var(--cream) 0%, #f6e8d2 100%);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  a.back {
+    display: inline-block;
+    margin: 1.25rem 0 0 1.25rem;
+    color: var(--maroon);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  a.back:hover { text-decoration: underline; }
+  main {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 0.5rem 1.25rem 3rem;
+  }
+  h1 {
+    text-align: center;
+    color: var(--maroon);
+    margin: 0.5rem 0 0.2rem;
+  }
+  .intro {
+    text-align: center;
+    color: #6b5a4a;
+    font-size: 0.95rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #8a7458;
+    margin-bottom: 0.4rem;
+  }
+  .progress-track {
+    height: 8px;
+    border-radius: 4px;
+    background: #e6d3ae;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--marigold), var(--gold));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e6d3ae;
+    border-left: 5px solid var(--marigold);
+    border-radius: 10px;
+    padding: 1.4rem 1.3rem;
+    box-shadow: 0 3px 12px rgba(107, 29, 29, 0.1);
+  }
+  .question {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: var(--maroon);
+    margin: 0 0 1.1rem;
+  }
+  .options {
+    display: grid;
+    gap: 0.65rem;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--cream);
+    border: 2px solid #e6d3ae;
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--marigold);
+    transform: translateY(-1px);
+  }
+  .option:disabled { cursor: default; }
+  .option .mark {
+    font-size: 1.1rem;
+    width: 1.2em;
+    flex: none;
+    text-align: center;
+  }
+  .option.correct {
+    background: #eaf5ea;
+    border-color: var(--green);
+    color: #204c23;
+  }
+  .option.wrong {
+    background: #fbeaea;
+    border-color: var(--red);
+    color: #5c1f1f;
+  }
+  .option.dim { opacity: 0.55; }
+
+  .feedback {
+    margin: 1rem 0 0;
+    font-weight: bold;
+    min-height: 1.4em;
+  }
+  .feedback.is-correct { color: var(--green); }
+  .feedback.is-wrong { color: var(--red); }
+
+  .next-btn {
+    display: none;
+    margin-top: 1.1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--cream);
+    background: var(--maroon);
+    border: 0;
+    border-radius: 999px;
+    padding: 0.6rem 1.4rem;
+    cursor: pointer;
+  }
+  .next-btn:hover { background: #8a2b2b; }
+  .next-btn.show { display: inline-block; }
+
+  /* Score screen */
+  .score-screen { text-align: center; }
+  .score-screen .big {
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: var(--maroon);
+    margin: 0.2rem 0;
+  }
+  .score-screen .msg { font-size: 1.1rem; margin-bottom: 1.4rem; }
+  .score-screen .actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .score-screen .actions a,
+  .score-screen .actions button {
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.3rem;
+    cursor: pointer;
+    border: 2px solid var(--maroon);
+  }
+  .score-screen .actions button {
+    background: var(--maroon);
+    color: var(--cream);
+  }
+  .score-screen .actions a {
+    background: transparent;
+    color: var(--maroon);
+  }
+
+  [hidden] { display: none !important; }
+
+  /* Firework burst for a correct answer */
+  .fx-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 50;
+  }
+  .spark {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 6px 1px var(--c);
+    animation: spark-fly 0.75s ease-out forwards;
+  }
+  @keyframes spark-fly {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
+  }
+
+  /* Clown pop for a wrong answer */
+  .clown-pop {
+    position: fixed;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    z-index: 50;
+    pointer-events: none;
+    animation: clown-wobble 0.9s ease-out forwards;
+  }
+  @keyframes clown-wobble {
+    0% { transform: translate(-50%, -50%) scale(0.2) rotate(-15deg); opacity: 0; }
+    35% { transform: translate(-50%, -50%) scale(1.15) rotate(8deg); opacity: 1; }
+    55% { transform: translate(-50%, -50%) scale(1) rotate(-6deg); }
+    100% { transform: translate(-50%, -55%) scale(1) rotate(0deg); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spark, .clown-pop { animation: none; opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">&larr; Back to the Golu</a>
+
+<main>
+  <h1>Golu Quiz</h1>
+  <p class="intro">A few quick questions about Navratri and Golu. Get one right and things get festive.</p>
+
+  <div class="progress-row">
+    <span id="progress-label">Question 1 of 5</span>
+    <span id="score-label">Score: 0</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+  <div class="card" id="quiz-card">
+    <p class="question" id="question-text"></p>
+    <div class="options" id="options-list"></div>
+    <p class="feedback" id="feedback-text"></p>
+    <button class="next-btn" id="next-btn" type="button">Next question &rarr;</button>
+  </div>
+
+  <div class="card score-screen" id="score-screen" hidden>
+    <p class="big" id="score-big"></p>
+    <p class="msg" id="score-msg"></p>
+    <div class="actions">
+      <button type="button" id="retry-btn">Play again</button>
+      <a href="index.html">Back to the Golu</a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Placeholder trivia. Swap the text/options/correct index for your own
+  // questions any time, structure stays the same.
+  var QUESTIONS = [
+    {
+      q: "What does a Golu display traditionally arrange on steps during Navratri?",
+      options: ["Dolls and figurines", "Only fresh flowers", "Family photographs", "Musical instruments"],
+      correct: 0
+    },
+    {
+      q: "Golu steps (padi) are traditionally set up in what kind of numbers?",
+      options: ["Always exactly ten", "Odd numbers, like 3, 5, 7, or 9", "Always exactly four", "It never matters"],
+      correct: 1
+    },
+    {
+      q: "What does \"Navratri\" literally mean?",
+      options: ["Nine colors", "Nine gods", "Nine nights", "Nine days"],
+      correct: 2
+    },
+    {
+      q: "Which deity's figure is often placed prominently, sometimes at the very top, of a Golu display?",
+      options: ["Lord Ganesha", "No deity in particular", "Only Durga", "Only Lakshmi"],
+      correct: 0
+    },
+    {
+      q: "What do guests visiting a Golu display traditionally receive before they leave?",
+      options: ["A written invitation for next year", "Nothing, it is only for viewing", "Sundal or a small treat and thamboolam", "A framed photo of the display"],
+      correct: 2
+    }
+  ];
+
+  var current = 0;
+  var score = 0;
+  var answered = false;
+
+  var questionText = document.getElementById('question-text');
+  var optionsList = document.getElementById('options-list');
+  var feedbackText = document.getElementById('feedback-text');
+  var nextBtn = document.getElementById('next-btn');
+  var progressLabel = document.getElementById('progress-label');
+  var scoreLabel = document.getElementById('score-label');
+  var progressFill = document.getElementById('progress-fill');
+  var quizCard = document.getElementById('quiz-card');
+  var scoreScreen = document.getElementById('score-screen');
+  var scoreBig = document.getElementById('score-big');
+  var scoreMsg = document.getElementById('score-msg');
+  var retryBtn = document.getElementById('retry-btn');
+
+  function renderQuestion() {
+    answered = false;
+    var item = QUESTIONS[current];
+    questionText.textContent = item.q;
+    optionsList.innerHTML = '';
+    feedbackText.textContent = '';
+    feedbackText.className = 'feedback';
+    nextBtn.classList.remove('show');
+
+    item.options.forEach(function (label, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'option';
+      btn.innerHTML = '<span class="mark" aria-hidden="true"></span><span>' + label + '</span>';
+      btn.addEventListener('click', function (e) { onAnswer(i, btn, e); });
+      optionsList.appendChild(btn);
+    });
+
+    progressLabel.textContent = 'Question ' + (current + 1) + ' of ' + QUESTIONS.length;
+    scoreLabel.textContent = 'Score: ' + score;
+    progressFill.style.width = Math.round((current / QUESTIONS.length) * 100) + '%';
+  }
+
+  function onAnswer(choiceIndex, btn, e) {
+    if (answered) return;
+    answered = true;
+    var item = QUESTIONS[current];
+    var isCorrect = choiceIndex === item.correct;
+    var rect = btn.getBoundingClientRect();
+    var x = rect.left + rect.width / 2;
+    var y = rect.top + rect.height / 2;
+
+    Array.prototype.forEach.call(optionsList.children, function (opt, i) {
+      opt.disabled = true;
+      var mark = opt.querySelector('.mark');
+      if (i === item.correct) {
+        opt.classList.add('correct');
+        mark.textContent = '✓';
+      } else if (i === choiceIndex) {
+        opt.classList.add('wrong');
+        mark.textContent = '✗';
+      } else {
+        opt.classList.add('dim');
+      }
+    });
+
+    if (isCorrect) {
+      score += 1;
+      feedbackText.textContent = 'Correct!';
+      feedbackText.className = 'feedback is-correct';
+      burstFireworks(x, y);
+    } else {
+      feedbackText.textContent = 'Not quite, the right answer is highlighted above.';
+      feedbackText.className = 'feedback is-wrong';
+      popClown(x, y);
+    }
+
+    scoreLabel.textContent = 'Score: ' + score;
+    setTimeout(function () { nextBtn.classList.add('show'); }, 350);
+  }
+
+  nextBtn.addEventListener('click', function () {
+    current += 1;
+    if (current >= QUESTIONS.length) {
+      showScore();
+    } else {
+      renderQuestion();
+    }
+  });
+
+  function showScore() {
+    quizCard.hidden = true;
+    scoreScreen.hidden = false;
+    progressFill.style.width = '100%';
+    progressLabel.textContent = 'Quiz complete';
+    scoreBig.textContent = score + ' / ' + QUESTIONS.length;
+    var msg;
+    if (score === QUESTIONS.length) { msg = "Golu genius! You know your stuff."; }
+    else if (score >= Math.ceil(QUESTIONS.length * 0.6)) { msg = "Great job, well done!"; }
+    else if (score > 0) { msg = "Nice try, come explore the write-ups for more."; }
+    else { msg = "Rough round. Have another go?"; }
+    scoreMsg.textContent = msg;
+  }
+
+  retryBtn.addEventListener('click', function () {
+    current = 0;
+    score = 0;
+    scoreScreen.hidden = true;
+    quizCard.hidden = false;
+    renderQuestion();
+  });
+
+  function burstFireworks(x, y) {
+    var layer = document.createElement('div');
+    layer.className = 'fx-layer';
+    document.body.appendChild(layer);
+    var colors = ['#c9932e', '#e07a2c', '#6b1d1d', '#fdf6ec', '#3f7d43'];
+    var count = 18;
+    for (var i = 0; i < count; i++) {
+      var angle = (Math.PI * 2 * i) / count + Math.random() * 0.3;
+      var dist = 60 + Math.random() * 70;
+      var spark = document.createElement('span');
+      spark.className = 'spark';
+      spark.style.setProperty('--x', x + 'px');
+      spark.style.setProperty('--y', y + 'px');
+      spark.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      spark.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      spark.style.setProperty('--c', colors[i % colors.length]);
+      layer.appendChild(spark);
+    }
+    setTimeout(function () { layer.remove(); }, 800);
+  }
+
+  function popClown(x, y) {
+    var el = document.createElement('div');
+    el.className = 'clown-pop';
+    el.textContent = '\u{1F921}';
+    el.style.setProperty('--x', x + 'px');
+    el.style.setProperty('--y', y + 'px');
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 950);
+  }
+
+  renderQuestion();
+</script>
+
+</body>
+</html>

@@ -258,6 +258,27 @@
   .diya { width: 52px; height: auto; }
   .flame { transform-origin: 50% 100%; }
 
+  .quiz-cta-wrap { text-align: center; margin: 2rem 0 0; }
+  .quiz-cta {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--maroon);
+    background: linear-gradient(180deg, #f6dfa8, var(--gold));
+    border: 1px solid #a9762a;
+    border-radius: 999px;
+    padding: 0.7rem 1.6rem;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(107, 29, 29, 0.2);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .quiz-cta:hover,
+  .quiz-cta:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(107, 29, 29, 0.3);
+    outline: none;
+  }
+
   footer {
     text-align: center;
     padding: 1.5rem;
@@ -512,6 +533,10 @@
       </svg>
     </div>
   </div>
+
+  <p class="quiz-cta-wrap">
+    <a class="quiz-cta" href="quiz.html">Take the Golu Quiz &rarr;</a>
+  </p>
 </main>
 
 <footer>

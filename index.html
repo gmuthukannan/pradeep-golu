@@ -198,31 +198,11 @@
     border-radius: 0 0 8px 8px;
     padding: 0.7rem;
     box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.35), 0 6px 14px rgba(43, 24, 16, 0.3);
-    transform-origin: top center;
   }
   .panel[hidden] { display: none; }
   /* when a panel is open, the next tier sits flush below it instead of
      overlapping it the way tiers overlap each other */
   .panel:not([hidden]) + .tier { margin-top: 0; }
-
-  /* Pop the video out of the tier like it's emerging from a letterbox
-     slit: unfurl from a flat bar with a little overshoot, then settle. */
-  @keyframes panel-pop-in {
-    0%   { transform: scaleY(0.04); opacity: 0; }
-    55%  { transform: scaleY(1.07); opacity: 1; }
-    78%  { transform: scaleY(0.96); }
-    100% { transform: scaleY(1); opacity: 1; }
-  }
-  @keyframes panel-pop-out {
-    0%   { transform: scaleY(1); opacity: 1; }
-    100% { transform: scaleY(0.04); opacity: 0; }
-  }
-  .panel.is-opening { animation: panel-pop-in 0.45s cubic-bezier(0.22, 0.9, 0.32, 1) both; }
-  .panel.is-closing { animation: panel-pop-out 0.2s ease-in both; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .panel.is-opening, .panel.is-closing { animation: none; }
-  }
 
   /* Decorative top tier: Lord Ganesha */
   .tier-decor { padding: 0.6rem 0.5rem 0.7rem; }
@@ -558,42 +538,21 @@
   // open, and the closed panel's video is unloaded so it stops playing.
   (function () {
     var tiers = document.querySelectorAll('.tier[aria-controls]');
-    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function closeTier(tier) {
       var panel = document.getElementById(tier.getAttribute('aria-controls'));
       tier.setAttribute('aria-expanded', 'false');
-      if (!panel || panel.hidden) return;
-      if (panel._hideTimer) { clearTimeout(panel._hideTimer); }
+      if (!panel) return;
+      panel.hidden = true;
       var iframe = panel.querySelector('iframe');
       if (iframe) { iframe.src = ''; }
-
-      if (reduceMotion) {
-        panel.hidden = true;
-        return;
-      }
-      panel.classList.remove('is-opening');
-      panel.classList.add('is-closing');
-      panel._hideTimer = setTimeout(function () {
-        panel.hidden = true;
-        panel.classList.remove('is-closing');
-        panel._hideTimer = null;
-      }, 200);
     }
 
     function openTier(tier) {
       var panel = document.getElementById(tier.getAttribute('aria-controls'));
       tier.setAttribute('aria-expanded', 'true');
       if (!panel) return;
-      if (panel._hideTimer) { clearTimeout(panel._hideTimer); panel._hideTimer = null; }
-      panel.classList.remove('is-closing');
       panel.hidden = false;
-      if (!reduceMotion) {
-        // force a reflow so the pop-in animation restarts even if the
-        // panel was just closed and re-opened before it finished
-        void panel.offsetWidth;
-        panel.classList.add('is-opening');
-      }
       var iframe = panel.querySelector('iframe');
       if (iframe && iframe.dataset.src) {
         iframe.src = iframe.dataset.src;

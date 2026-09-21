@@ -204,26 +204,34 @@
      overlapping it the way tiers overlap each other */
   .panel:not([hidden]) + .tier { margin-top: 0; }
 
-  /* Decorative top tier: the Tridevi, Durga, Lakshmi and Saraswati */
-  .tier-decor { padding: 0.55rem 0.5rem 0.65rem; }
-  .deities {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 1.1rem;
-  }
-  .deity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2rem;
-  }
-  .deity-icon { width: 58px; height: auto; display: block; }
-  .deity-name {
-    font-size: 0.6rem;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
+  /* Decorative top tier: the Tridevi, Durga, Lakshmi and Saraswati,
+     framed like a small painting hung at the top of the display */
+  .tier-decor { padding: 0.7rem; }
+  .deity-caption {
+    display: block;
+    font-size: 0.8rem;
     color: #eccfa6;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    margin-bottom: 0.5rem;
+  }
+  .deity-frame {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    aspect-ratio: 1287 / 700;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(201, 147, 46, 0.6);
+    background: #25262a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 233, 200, 0.06);
+  }
+  .deity-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   /* Video tier */
@@ -352,10 +360,8 @@
     }
 
     .tier .label { font-size: 1rem; }
-    .tier-decor { padding: 0.5rem 0.4rem 0.6rem; }
-    .deities { gap: 0.6rem; }
-    .deity-icon { width: 42px; }
-    .deity-name { font-size: 0.52rem; }
+    .tier-decor { padding: 0.6rem; }
+    .deity-caption { font-size: 0.72rem; }
 
     .plinth { height: 15px; }
     .diya { width: 42px; }
@@ -410,193 +416,9 @@
     <div class="staircase">
       <!-- Tier 1: decorative Tridevi (Durga, Lakshmi, Saraswati) -->
       <div class="tier t1 tier-decor">
-        <div class="deities">
-          <div class="deity">
-            <svg class="deity-icon" viewBox="0 0 100 120" aria-hidden="true">
-              <!-- halo -->
-              <circle cx="50" cy="42" r="34" fill="#fdf6ec" opacity="0.12"/>
-              <circle cx="50" cy="42" r="34" fill="#c9932e" opacity="0.10"/>
-              <circle cx="50" cy="42" r="28" fill="none" stroke="#e0a94a" stroke-width="1.1" opacity="0.5"/>
-
-              <!-- lion mount -->
-              <path d="M44 104 l-8 3 l3 -8 Z" fill="#e07a2c"/>
-              <path d="M32 108 l-8 -1 l6 -6 Z" fill="#e07a2c"/>
-              <path d="M56 104 l8 3 l-3 -8 Z" fill="#e07a2c"/>
-              <path d="M68 108 l8 -1 l-6 -6 Z" fill="#e07a2c"/>
-              <path d="M40 118 l-8 2 l4 -8 Z" fill="#e07a2c"/>
-              <path d="M60 118 l8 2 l-4 -8 Z" fill="#e07a2c"/>
-              <circle cx="50" cy="110" r="13" fill="#c9932e"/>
-              <path d="M40 100 l-3 -6 l6 2 Z" fill="#c9932e"/>
-              <path d="M60 100 l3 -6 l-6 2 Z" fill="#c9932e"/>
-              <circle cx="44" cy="109" r="1.4" fill="#2b1810"/>
-              <circle cx="56" cy="109" r="1.4" fill="#2b1810"/>
-              <path d="M47 113 l3 3 l3 -3 z" fill="#7d2323"/>
-
-              <!-- body -->
-              <path d="M50 60 C36 60 30 76 32 92 C34 102 42 106 50 106 C58 106 66 102 68 92 C70 76 64 60 50 60 Z" fill="#5c1919"/>
-              <rect x="34" y="80" width="32" height="5" rx="2.5" fill="#c9932e"/>
-
-              <!-- lower arms -->
-              <path d="M34 78 C26 80 22 86 24 92" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="24" cy="92" r="4" fill="#7d2323"/>
-              <path d="M66 78 C74 80 78 86 76 92" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="76" cy="92" r="4" fill="#7d2323"/>
-
-              <!-- upper arms -->
-              <path d="M36 66 C26 62 20 50 22 40" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="22" cy="39" r="4" fill="#7d2323"/>
-              <path d="M64 66 C74 62 80 50 78 40" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="78" cy="39" r="4" fill="#7d2323"/>
-
-              <!-- sword -->
-              <path d="M22 39 L19 14 L25 14 Z" fill="#e0a94a" stroke="#6b1d1d" stroke-width="1"/>
-              <rect x="20.3" y="37" width="3.4" height="6" fill="#7d2323"/>
-
-              <!-- trishul -->
-              <line x1="78" y1="39" x2="78" y2="17" stroke="#c9932e" stroke-width="2.4" stroke-linecap="round"/>
-              <path d="M78 17 l-5 -8 M78 17 l0 -10 M78 17 l5 -8" stroke="#c9932e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-
-              <!-- collar -->
-              <path d="M40 56 Q50 62 60 56 L58 64 Q50 68 42 64 Z" fill="#c9932e"/>
-
-              <!-- face -->
-              <ellipse cx="50" cy="40" rx="16" ry="19" fill="#7d2323"/>
-              <path d="M34 34 C30 20 34 10 42 8 C38 16 36 26 36 34 Z" fill="#4a1414"/>
-              <path d="M66 34 C70 20 66 10 58 8 C62 16 64 26 64 34 Z" fill="#4a1414"/>
-              <ellipse cx="44" cy="40" rx="3" ry="2.1" fill="#fdf6ec"/>
-              <ellipse cx="56" cy="40" rx="3" ry="2.1" fill="#fdf6ec"/>
-              <circle cx="44" cy="40" r="1.1" fill="#2b1810"/>
-              <circle cx="56" cy="40" r="1.1" fill="#2b1810"/>
-              <circle cx="50" cy="31" r="1.6" fill="#e07a2c"/>
-              <path d="M45 49 Q50 52 55 49" stroke="#e07a2c" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-
-              <!-- crown -->
-              <path d="M36 22 C36 6 50 0 50 0 C50 0 64 6 64 22 Z" fill="#c9932e" stroke="#6b1d1d" stroke-width="1.4"/>
-              <path d="M35 20 h30" stroke="#e07a2c" stroke-width="4" stroke-linecap="round"/>
-              <circle cx="50" cy="1" r="2.4" fill="#c9932e" stroke="#6b1d1d" stroke-width="1"/>
-            </svg>
-            <span class="deity-name">Durga</span>
-          </div>
-
-          <div class="deity">
-            <svg class="deity-icon" viewBox="0 0 100 120" aria-hidden="true">
-              <circle cx="50" cy="42" r="34" fill="#fdf6ec" opacity="0.12"/>
-              <circle cx="50" cy="42" r="34" fill="#c9932e" opacity="0.10"/>
-              <circle cx="50" cy="42" r="28" fill="none" stroke="#e0a94a" stroke-width="1.1" opacity="0.5"/>
-
-              <!-- lotus mount -->
-              <path d="M18 108 Q50 94 82 108 Q65 119 50 119 Q35 119 18 108 Z" fill="#c9932e"/>
-              <path d="M27 107 Q50 98 73 107" stroke="#e0a94a" stroke-width="1.4" fill="none"/>
-              <path d="M35 111 Q50 104 65 111" stroke="#a9762a" stroke-width="1.1" fill="none"/>
-
-              <path d="M50 60 C36 60 30 76 32 92 C34 102 42 106 50 106 C58 106 66 102 68 92 C70 76 64 60 50 60 Z" fill="#5c1919"/>
-              <rect x="34" y="80" width="32" height="5" rx="2.5" fill="#c9932e"/>
-
-              <path d="M34 78 C27 81 24 87 26 93" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="26" cy="93" r="4" fill="#7d2323"/>
-              <path d="M66 78 C73 81 76 87 74 93" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="74" cy="93" r="4" fill="#7d2323"/>
-              <!-- coin trickle -->
-              <circle cx="76" cy="99" r="1.3" fill="#c9932e"/>
-              <circle cx="78" cy="104" r="1" fill="#e0a94a"/>
-              <circle cx="73" cy="105" r="0.9" fill="#c9932e"/>
-
-              <path d="M36 66 C26 62 20 50 22 40" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="22" cy="39" r="4" fill="#7d2323"/>
-              <path d="M64 66 C74 62 80 50 78 40" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="78" cy="39" r="4" fill="#7d2323"/>
-
-              <!-- lotus flowers -->
-              <g transform="translate(22,35)">
-                <path d="M0 -6 C3 -4 3 0 0 0 C-3 0 -3 -4 0 -6 Z" fill="#e0a94a"/>
-                <path d="M0 6 C3 4 3 0 0 0 C-3 0 -3 4 0 6 Z" fill="#e0a94a"/>
-                <path d="M-6 0 C-4 -3 0 -3 0 0 C0 3 -4 3 -6 0 Z" fill="#e0a94a"/>
-                <path d="M6 0 C4 -3 0 -3 0 0 C0 3 4 3 6 0 Z" fill="#e0a94a"/>
-                <circle r="1.8" fill="#e07a2c"/>
-              </g>
-              <g transform="translate(78,35)">
-                <path d="M0 -6 C3 -4 3 0 0 0 C-3 0 -3 -4 0 -6 Z" fill="#e0a94a"/>
-                <path d="M0 6 C3 4 3 0 0 0 C-3 0 -3 4 0 6 Z" fill="#e0a94a"/>
-                <path d="M-6 0 C-4 -3 0 -3 0 0 C0 3 -4 3 -6 0 Z" fill="#e0a94a"/>
-                <path d="M6 0 C4 -3 0 -3 0 0 C0 3 4 3 6 0 Z" fill="#e0a94a"/>
-                <circle r="1.8" fill="#e07a2c"/>
-              </g>
-
-              <path d="M40 56 Q50 62 60 56 L58 64 Q50 68 42 64 Z" fill="#c9932e"/>
-
-              <ellipse cx="50" cy="40" rx="16" ry="19" fill="#7d2323"/>
-              <path d="M34 34 C30 20 34 10 42 8 C38 16 36 26 36 34 Z" fill="#4a1414"/>
-              <path d="M66 34 C70 20 66 10 58 8 C62 16 64 26 64 34 Z" fill="#4a1414"/>
-              <ellipse cx="44" cy="40" rx="3" ry="2.1" fill="#fdf6ec"/>
-              <ellipse cx="56" cy="40" rx="3" ry="2.1" fill="#fdf6ec"/>
-              <circle cx="44" cy="40" r="1.1" fill="#2b1810"/>
-              <circle cx="56" cy="40" r="1.1" fill="#2b1810"/>
-              <circle cx="50" cy="31" r="1.6" fill="#e07a2c"/>
-              <path d="M45 49 Q50 52 55 49" stroke="#e07a2c" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-
-              <path d="M36 22 C36 6 50 0 50 0 C50 0 64 6 64 22 Z" fill="#c9932e" stroke="#6b1d1d" stroke-width="1.4"/>
-              <path d="M35 20 h30" stroke="#e07a2c" stroke-width="4" stroke-linecap="round"/>
-              <circle cx="50" cy="1" r="2.4" fill="#c9932e" stroke="#6b1d1d" stroke-width="1"/>
-            </svg>
-            <span class="deity-name">Lakshmi</span>
-          </div>
-
-          <div class="deity">
-            <svg class="deity-icon" viewBox="0 0 100 120" aria-hidden="true">
-              <circle cx="50" cy="42" r="34" fill="#fdf6ec" opacity="0.12"/>
-              <circle cx="50" cy="42" r="34" fill="#c9932e" opacity="0.10"/>
-              <circle cx="50" cy="42" r="28" fill="none" stroke="#e0a94a" stroke-width="1.1" opacity="0.5"/>
-
-              <!-- swan mount -->
-              <ellipse cx="48" cy="111" rx="15" ry="7" fill="#c9932e"/>
-              <path d="M60 109 C67 105 67 96 60 94 C64 99 62 105 57 107 Z" fill="#c9932e"/>
-              <path d="M60 96 l6 -1 l-3.5 3.5 Z" fill="#e07a2c"/>
-              <circle cx="59.5" cy="97.5" r="0.9" fill="#2b1810"/>
-
-              <path d="M50 60 C36 60 30 76 32 92 C34 102 42 106 50 106 C58 106 66 102 68 92 C70 76 64 60 50 60 Z" fill="#5c1919"/>
-              <rect x="34" y="80" width="32" height="5" rx="2.5" fill="#c9932e"/>
-
-              <!-- back hands: book + mala -->
-              <path d="M34 68 C26 66 21 58 22 50" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="22" cy="49" r="4" fill="#7d2323"/>
-              <path d="M66 68 C74 66 79 58 78 50" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="78" cy="49" r="4" fill="#7d2323"/>
-              <circle cx="22" cy="49" r="5.5" fill="none" stroke="#c9932e" stroke-width="1.5"/>
-              <circle cx="22" cy="43.5" r="1" fill="#c9932e"/><circle cx="27.5" cy="49" r="1" fill="#c9932e"/>
-              <circle cx="22" cy="54.5" r="1" fill="#c9932e"/><circle cx="16.5" cy="49" r="1" fill="#c9932e"/>
-              <rect x="73.5" y="45" width="9" height="7" rx="1" fill="#e0a94a" stroke="#6b1d1d" stroke-width="0.8"/>
-              <line x1="78" y1="45" x2="78" y2="52" stroke="#6b1d1d" stroke-width="0.6"/>
-
-              <!-- front hands playing veena -->
-              <path d="M38 72 C33 75 31 79 33 83" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="33" cy="83" r="4" fill="#7d2323"/>
-              <path d="M62 72 C67 75 68 79 65 82" fill="none" stroke="#7d2323" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="65" cy="82" r="4" fill="#7d2323"/>
-
-              <!-- veena -->
-              <g stroke="#c9932e" fill="#c9932e">
-                <rect x="30" y="55" width="3.6" height="28" rx="1.8" transform="rotate(14 32 69)"/>
-                <ellipse cx="64" cy="80" rx="8" ry="6" transform="rotate(14 64 80)"/>
-              </g>
-
-              <path d="M40 56 Q50 62 60 56 L58 64 Q50 68 42 64 Z" fill="#c9932e"/>
-
-              <ellipse cx="50" cy="40" rx="16" ry="19" fill="#7d2323"/>
-              <path d="M34 34 C30 20 34 10 42 8 C38 16 36 26 36 34 Z" fill="#4a1414"/>
-              <path d="M66 34 C70 20 66 10 58 8 C62 16 64 26 64 34 Z" fill="#4a1414"/>
-              <ellipse cx="44" cy="40" rx="3" ry="2.1" fill="#fdf6ec"/>
-              <ellipse cx="56" cy="40" rx="3" ry="2.1" fill="#fdf6ec"/>
-              <circle cx="44" cy="40" r="1.1" fill="#2b1810"/>
-              <circle cx="56" cy="40" r="1.1" fill="#2b1810"/>
-              <circle cx="50" cy="31" r="1.6" fill="#e07a2c"/>
-              <path d="M45 49 Q50 52 55 49" stroke="#e07a2c" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-
-              <path d="M36 22 C36 6 50 0 50 0 C50 0 64 6 64 22 Z" fill="#c9932e" stroke="#6b1d1d" stroke-width="1.4"/>
-              <path d="M35 20 h30" stroke="#e07a2c" stroke-width="4" stroke-linecap="round"/>
-              <circle cx="50" cy="1" r="2.4" fill="#c9932e" stroke="#6b1d1d" stroke-width="1"/>
-            </svg>
-            <span class="deity-name">Saraswati</span>
-          </div>
+        <span class="deity-caption">The Tridevi</span>
+        <div class="deity-frame">
+          <img src="assets/tridevi.jpg" alt="Goddesses Durga, Lakshmi and Saraswati">
         </div>
       </div>
 

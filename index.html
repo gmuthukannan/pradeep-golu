@@ -121,7 +121,7 @@
   }
   .flower:nth-child(even) { transform: scale(0.82); }
 
-  /* The tiered Golu staircase */
+  /* The Golu steps, stacked full width on every device */
   .staircase {
     position: relative;
     display: flex;
@@ -141,11 +141,11 @@
     box-shadow: 0 7px 16px rgba(43, 24, 16, 0.35), inset 0 2px 0 rgba(255, 233, 200, 0.25);
   }
   .tier:first-child { margin-top: 0; }
-  .t1 { width: 44%; z-index: 7; }
-  .t2 { width: 55%; z-index: 6; }
-  .t3 { width: 67%; z-index: 5; }
-  .t4 { width: 79%; z-index: 4; }
-  .t5 { width: 90%; z-index: 3; }
+  .t1 { width: 100%; z-index: 7; }
+  .t2 { width: 100%; z-index: 6; }
+  .t3 { width: 100%; z-index: 5; }
+  .t4 { width: 100%; z-index: 4; }
+  .t5 { width: 100%; z-index: 3; }
   .t6 { width: 100%; z-index: 2; }
 
   /* Write-up tiers are clickable cards */
@@ -308,9 +308,9 @@
     .flame { animation: glowflick 1.7s ease-in-out infinite; }
   }
 
-  /* Phone: keep the staircase, but gently and with readable full-width text.
-     Steps taper only a little (min ~62%), stack tight, and each gets a
-     chunky dark riser edge so the descending-steps shape still reads. */
+  /* Phone: all steps are already full width from the base rules above.
+     Just tighten spacing, swap in a chunky dark riser edge per step, and
+     shrink the decorative bits so it stays readable. */
   @media (max-width: 560px) {
     main { padding: 1.25rem 0.85rem 2.5rem; }
     .stage { padding: 1.25rem 26px 0; }
@@ -332,12 +332,6 @@
       border-bottom: 8px solid #3d1010;
       box-shadow: 0 5px 9px rgba(43, 24, 16, 0.3), inset 0 2px 0 rgba(255, 233, 200, 0.22);
     }
-    .t1 { width: 64%; }
-    .t2 { width: 76%; }
-    .t3 { width: 84%; }
-    .t4 { width: 90%; }
-    .t5 { width: 96%; }
-    .t6 { width: 100%; }
 
     .tier .label { font-size: 1rem; }
     .tier-decor { padding: 0.5rem 0.4rem 0.6rem; }
@@ -349,15 +343,9 @@
     header h1 { font-size: 1.55rem; }
   }
 
-  /* Very narrow phones: ease the taper further so the top step still fits text */
+  /* Very narrow phones: just shrink the text a bit more, width is already 100% */
   @media (max-width: 360px) {
     .stage { padding: 1.25rem 22px 0; }
-    .t1 { width: 98%; }
-    .t2 { width: 98%; }
-    .t3 { width: 98%; }
-    .t4 { width: 98%; }
-    .t5 { width: 98%; }
-    .t6 { width: 98%; }
     .tier .label { font-size: 0.95rem; }
     .tier .sub { font-size: 0.8rem; }
   }

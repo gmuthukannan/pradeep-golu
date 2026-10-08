@@ -308,6 +308,43 @@
   }
   .music-toggle:focus-visible { box-shadow: 0 0 0 3px var(--maroon), 0 5px 14px rgba(43, 24, 16, 0.45); }
 
+  /* Nudge pointing at the toggle while the music is muted-and-waiting
+     for the browser to allow sound (every browser blocks real autoplay
+     until the visitor interacts, so the track starts muted and this
+     invites the tap that unmutes it) */
+  .music-hint {
+    position: fixed;
+    top: 20px;
+    right: 66px;
+    z-index: 100;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.78rem;
+    color: var(--cream);
+    background: var(--maroon);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 0.4rem 0.75rem;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(43, 24, 16, 0.35);
+    animation: hint-bob 1.8s ease-in-out infinite;
+  }
+  .music-hint::after {
+    content: "";
+    position: absolute;
+    top: 50%; right: -6px;
+    transform: translateY(-50%);
+    border-width: 6px 0 6px 6px;
+    border-style: solid;
+    border-color: transparent transparent transparent var(--maroon);
+  }
+  @keyframes hint-bob {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-3px); opacity: 0.85; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .music-hint { animation: none; }
+  }
+
   .quiz-cta-wrap { text-align: center; margin: 2rem 0 0; }
   .quiz-cta {
     display: inline-block;
@@ -403,7 +440,8 @@
 </head>
 <body>
 
-<audio id="bg-music" src="assets/golu_music.mp3" loop preload="auto"></audio>
+<audio id="bg-music" src="assets/golu_music.mp3" loop preload="auto" muted></audio>
+<span id="music-hint" class="music-hint" aria-hidden="true" hidden>Tap for music</span>
 <button type="button" id="music-toggle" class="music-toggle" aria-pressed="false" aria-label="Play background music">&#128264;</button>
 
 <header>
@@ -534,48 +572,67 @@
 </footer>
 
 <script>
-  // Background music: try to autoplay on load. Browsers block unmuted
-  // autoplay unless the visitor already interacted with the page, so if
-  // that fails, start it on their first tap/click anywhere instead. The
-  // toggle button always reflects actual play state and lets guests mute.
+  // Background music: no browser allows real (unmuted) autoplay the
+  // instant a page opens, that is a deliberate, universal browser policy,
+  // not something fixable in JS. The closest thing to "plays by default"
+  // is to start it muted immediately (always allowed) so it is already
+  // running the moment the page loads, and unmute on the very first tap
+  // anywhere, no restart, no delay, just sound turning on. A pulsing
+  // hint by the toggle button invites that first tap.
   (function () {
     var audio = document.getElementById('bg-music');
     var toggle = document.getElementById('music-toggle');
+    var hint = document.getElementById('music-hint');
     if (!audio || !toggle) return;
-    var userStopped = false;
+    var unlockArmed = true;
+
+    function isAudible() { return !audio.muted && !audio.paused; }
 
     function sync() {
-      toggle.innerHTML = audio.paused ? '&#128264;' : '&#128266;';
-      toggle.setAttribute('aria-pressed', String(!audio.paused));
-      toggle.setAttribute('aria-label', audio.paused ? 'Play background music' : 'Mute background music');
+      var audible = isAudible();
+      toggle.innerHTML = audible ? '&#128266;' : '&#128264;';
+      toggle.setAttribute('aria-pressed', String(audible));
+      toggle.setAttribute('aria-label', audible ? 'Mute background music' : 'Play background music');
+      if (hint) hint.hidden = audible;
     }
 
-    function attemptPlay() {
-      var p = audio.play();
-      if (p && typeof p.then === 'function') { p.then(sync).catch(sync); }
+    function unmuteAndPlay() {
+      audio.muted = false;
+      if (audio.paused) {
+        var p = audio.play();
+        if (p && typeof p.catch === 'function') { p.catch(function () {}); }
+      }
+      sync();
     }
 
-    function unlockOnFirstGesture() {
-      document.addEventListener('pointerdown', function onGesture() {
+    function disarmGlobalUnlock() {
+      if (unlockArmed) {
+        unlockArmed = false;
         document.removeEventListener('pointerdown', onGesture);
-        if (!userStopped && audio.paused) { attemptPlay(); }
-      }, { once: true });
+      }
+    }
+
+    function onGesture(e) {
+      if (toggle.contains(e.target)) return; // the button handles its own click
+      disarmGlobalUnlock();
+      unmuteAndPlay();
     }
 
     toggle.addEventListener('click', function () {
-      if (audio.paused) {
-        userStopped = false;
-        attemptPlay();
-      } else {
-        userStopped = true;
-        audio.pause();
+      disarmGlobalUnlock();
+      if (isAudible()) {
+        audio.muted = true;
         sync();
+      } else {
+        unmuteAndPlay();
       }
     });
 
+    audio.muted = true;
+    var startP = audio.play();
+    if (startP && typeof startP.catch === 'function') { startP.catch(sync); }
     sync();
-    attemptPlay();
-    unlockOnFirstGesture();
+    document.addEventListener('pointerdown', onGesture);
   })();
 
   // Accordion: clicking a write-up tier opens a video panel below it

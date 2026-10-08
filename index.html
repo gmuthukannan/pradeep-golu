@@ -279,6 +279,35 @@
   .diya { width: 52px; height: auto; }
   .flame { transform-origin: 50% 100%; }
 
+  /* Background-music toggle, fixed in the corner on every viewport */
+  .music-toggle {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 100;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid #a9762a;
+    background: linear-gradient(180deg, #f6dfa8, var(--gold));
+    color: var(--maroon);
+    font-size: 1.2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(43, 24, 16, 0.35);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .music-toggle:hover,
+  .music-toggle:focus-visible {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 5px 14px rgba(43, 24, 16, 0.45);
+    outline: none;
+  }
+  .music-toggle:focus-visible { box-shadow: 0 0 0 3px var(--maroon), 0 5px 14px rgba(43, 24, 16, 0.45); }
+
   .quiz-cta-wrap { text-align: center; margin: 2rem 0 0; }
   .quiz-cta {
     display: inline-block;
@@ -373,6 +402,9 @@
 </style>
 </head>
 <body>
+
+<audio id="bg-music" src="assets/golu_music.mp3" loop preload="auto"></audio>
+<button type="button" id="music-toggle" class="music-toggle" aria-pressed="false" aria-label="Play background music">&#128264;</button>
 
 <header>
   <h1>Pradeep's Golu 2026</h1>
@@ -502,6 +534,50 @@
 </footer>
 
 <script>
+  // Background music: try to autoplay on load. Browsers block unmuted
+  // autoplay unless the visitor already interacted with the page, so if
+  // that fails, start it on their first tap/click anywhere instead. The
+  // toggle button always reflects actual play state and lets guests mute.
+  (function () {
+    var audio = document.getElementById('bg-music');
+    var toggle = document.getElementById('music-toggle');
+    if (!audio || !toggle) return;
+    var userStopped = false;
+
+    function sync() {
+      toggle.innerHTML = audio.paused ? '&#128264;' : '&#128266;';
+      toggle.setAttribute('aria-pressed', String(!audio.paused));
+      toggle.setAttribute('aria-label', audio.paused ? 'Play background music' : 'Mute background music');
+    }
+
+    function attemptPlay() {
+      var p = audio.play();
+      if (p && typeof p.then === 'function') { p.then(sync).catch(sync); }
+    }
+
+    function unlockOnFirstGesture() {
+      document.addEventListener('pointerdown', function onGesture() {
+        document.removeEventListener('pointerdown', onGesture);
+        if (!userStopped && audio.paused) { attemptPlay(); }
+      }, { once: true });
+    }
+
+    toggle.addEventListener('click', function () {
+      if (audio.paused) {
+        userStopped = false;
+        attemptPlay();
+      } else {
+        userStopped = true;
+        audio.pause();
+        sync();
+      }
+    });
+
+    sync();
+    attemptPlay();
+    unlockOnFirstGesture();
+  })();
+
   // Accordion: clicking a write-up tier opens a video panel below it
   // instead of navigating away. Opening one closes any other that was
   // open, and the closed panel's video is unloaded so it stops playing.

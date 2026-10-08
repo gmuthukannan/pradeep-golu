@@ -33,7 +33,17 @@ The site goes live at https://gmuthukannan.github.io/pradeep-golu/ about 1 to 2 
 - Edit the title and body text in `writeup1.html` .. `writeup4.html`
 - In `index.html`, update the 4 card labels and descriptions to match
 - In `index.html`, replace the YouTube video ID in `src="https://www.youtube.com/embed/VIDEO_ID"`
+- Add `assets/golu_music.mp3` (background music, see below), there's no file there yet
 - Commit and push again
+
+## Background music
+`index.html` has a music player wired up (autoplay where the browser allows it,
+otherwise it starts on the guest's first tap, plus a toggle button in the top
+right corner so anyone can mute it) but no audio file. Drop an MP3 at
+`assets/golu_music.mp3` (keep that exact name, or update the `src` on the
+`<audio>` tag near the top of `index.html`) and push. Use something you have
+the rights to use, a royalty-free or public-domain track, your own recording,
+or music you've bought/licensed, since this repo is public on GitHub Pages.
 
 ## 5. If the URL ever changes
 Regenerate the fallback QR:

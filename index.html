@@ -682,7 +682,9 @@
         // opening it was a direct result of the visitor's own click
         if (window.pauseGoluMusic) { window.pauseGoluMusic(); }
         var sep = iframe.dataset.src.indexOf('?') === -1 ? '?' : '&';
-        iframe.src = iframe.dataset.src + sep + 'autoplay=1';
+        // playsinline=1 is required on iOS or the embed insists on going
+        // fullscreen to play, which has its own, separate gesture rules
+        iframe.src = iframe.dataset.src + sep + 'autoplay=1&playsinline=1';
       }
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }

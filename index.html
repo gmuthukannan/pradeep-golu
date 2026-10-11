@@ -606,6 +606,26 @@
       sync();
     }
 
+    // Exposed so the write-up accordion can duck the music when a video
+    // opens, and bring it back only if it was actually audible before
+    // (never un-mutes music the visitor had deliberately turned off).
+    // isDucked guards against switching between two videos re-capturing
+    // "was it playing" from the already-paused in-between state.
+    var isDucked = false;
+    var wasAudibleBeforeDuck = false;
+    window.pauseGoluMusic = function () {
+      if (!isDucked) {
+        wasAudibleBeforeDuck = isAudible();
+        isDucked = true;
+      }
+      if (!audio.paused) { audio.pause(); }
+      sync();
+    };
+    window.resumeGoluMusicIfWasAudible = function () {
+      isDucked = false;
+      if (wasAudibleBeforeDuck) { unmuteAndPlay(); }
+    };
+
     function disarmGlobalUnlock() {
       if (unlockArmed) {
         unlockArmed = false;
@@ -658,7 +678,11 @@
       panel.hidden = false;
       var iframe = panel.querySelector('iframe');
       if (iframe && iframe.dataset.src) {
-        iframe.src = iframe.dataset.src;
+        // stop the background music, then autoplay this video since
+        // opening it was a direct result of the visitor's own click
+        if (window.pauseGoluMusic) { window.pauseGoluMusic(); }
+        var sep = iframe.dataset.src.indexOf('?') === -1 ? '?' : '&';
+        iframe.src = iframe.dataset.src + sep + 'autoplay=1';
       }
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -670,7 +694,12 @@
         e.preventDefault();
         var isOpen = tier.getAttribute('aria-expanded') === 'true';
         tiers.forEach(closeTier);
-        if (!isOpen) { openTier(tier); }
+        if (!isOpen) {
+          openTier(tier);
+        } else if (window.resumeGoluMusicIfWasAudible) {
+          // closed the only open video without opening another one
+          window.resumeGoluMusicIfWasAudible();
+        }
       });
     });
   })();

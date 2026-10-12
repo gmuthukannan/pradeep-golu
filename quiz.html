@@ -324,8 +324,8 @@
     },
     {
       q: "How many Linga\’s are in display?",
-      options: ["7", "3", "5", "6"],
-      correct: 0
+      options: ["7", "8", "5", "6"],
+      correct: 1
     },
     {
       q: "Which step has most number of same deity idols? (Steps are counted from top to bottom)",
@@ -476,6 +476,8 @@
     }
 
     scoreLabel.textContent = 'Score: ' + score;
+    var isLastQuestion = current === QUESTIONS.length - 1;
+    nextBtn.textContent = isLastQuestion ? 'Finish and Show Results →' : 'Next question →';
     setTimeout(function () { nextBtn.classList.add('show'); }, 350);
   }
 
